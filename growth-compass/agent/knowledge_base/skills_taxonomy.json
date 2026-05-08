@@ -1,0 +1,192 @@
+{
+  "version": "1.0",
+  "description": "Competency taxonomy for engineering and technical management roles. Used by Growth Compass to tag skills and assess levels.",
+  "domains": {
+    "technical": {
+      "label": "Technical Capability",
+      "competencies": {
+        "system_design": {
+          "label": "System Design",
+          "description": "Ability to design scalable, reliable systems with appropriate tradeoffs",
+          "levels": {
+            "aware": "Understands basic architecture patterns. Can read and interpret existing system designs.",
+            "practicing": "Designs components within an existing architecture. Seeks review on larger decisions.",
+            "capable": "Designs systems independently. Makes explicit tradeoffs and documents rationale.",
+            "proficient": "Designs cross-system architectures. Anticipates failure modes and scaling bottlenecks.",
+            "master": "Sets architectural standards for the organization. Designs for 10x growth and organizational constraints."
+          }
+        },
+        "coding_quality": {
+          "label": "Code Quality & Craftsmanship",
+          "description": "Writes clean, maintainable, well-tested code",
+          "levels": {
+            "aware": "Writes working code. Aware of style guides and testing concepts.",
+            "practicing": "Consistently writes tests. Code is readable and follows team conventions.",
+            "capable": "Designs APIs and abstractions well. Code is a model for peers. Catches issues in review.",
+            "proficient": "Raises the team's code quality bar. Introduces better patterns and tooling.",
+            "master": "Defines quality standards adopted across teams. Code influences practices beyond the organization."
+          }
+        },
+        "debugging": {
+          "label": "Debugging & Problem Solving",
+          "description": "Systematically diagnoses and resolves complex technical issues",
+          "levels": {
+            "aware": "Can follow a runbook. Knows how to search logs and ask for help.",
+            "practicing": "Debugs independently within owned services. Forms hypotheses before acting.",
+            "capable": "Debugs across system boundaries. Teaches debugging approach to others.",
+            "proficient": "Diagnoses novel problems with no prior art. Builds tools to make debugging faster for the team.",
+            "master": "Designs systems that are intentionally debuggable. Incident postmortems become industry references."
+          }
+        },
+        "ai_building": {
+          "label": "AI Building",
+          "description": "Ability to build, deploy, and iterate on AI-powered solutions",
+          "levels": {
+            "aware": "Uses AI tools daily. Understands prompt engineering basics. Has built simple workflows.",
+            "practicing": "Builds AI agents and workflows for personal or team use. Writes structured prompts. Experiments with new AI tools.",
+            "capable": "Ships AI solutions that solve real business problems. Designs modular agent architectures. Understands evaluation and iteration.",
+            "proficient": "Builds AI systems used across teams. Combines knowledge bases, skills, and MCP. Establishes AI development standards.",
+            "master": "Creates novel AI architectures. Teaches AI building methodology. Defines what good AI engineering looks like for the organization."
+          }
+        },
+        "data_thinking": {
+          "label": "Data Thinking",
+          "description": "Ability to define metrics, analyze data, and make data-informed decisions",
+          "levels": {
+            "aware": "Can read basic dashboards and SQL queries.",
+            "practicing": "Writes queries to answer own questions. Defines metrics for owned features.",
+            "capable": "Designs measurement frameworks. Distinguishes correlation from causation. Communicates findings clearly.",
+            "proficient": "Identifies what should be measured when the domain is ambiguous. Builds data pipelines and self-serve analytics.",
+            "master": "Creates a data-informed culture. Defines organization-level metrics that drive good decisions."
+          }
+        }
+      }
+    },
+    "product": {
+      "label": "Product & User Thinking",
+      "competencies": {
+        "user_insight": {
+          "label": "User Insight",
+          "description": "Understands user needs deeply, not just stated requirements",
+          "levels": {
+            "aware": "Reads user feedback. Can restate what users said.",
+            "practicing": "Conducts user interviews. Distinguishes what users say from what they need.",
+            "capable": "Identifies unmet needs. Prioritizes based on user impact, not just effort.",
+            "proficient": "Develops user empathy across the team. Decision-making consistently references user context.",
+            "master": "Sees user needs before users do. Creates products that change behavior."
+          }
+        },
+        "problem_definition": {
+          "label": "Problem Definition",
+          "description": "Structures fuzzy problems into clear, solvable definitions",
+          "levels": {
+            "aware": "Can work on well-defined problems. Needs clear requirements to start.",
+            "practicing": "Asks clarifying questions. Breaks down assigned problems into tasks.",
+            "capable": "Takes a vague need and defines the problem independently. Scopes appropriately.",
+            "proficient": "Frames problems the team didn't know it had. Reframes solutions into problem spaces.",
+            "master": "Defines the problem space for an entire domain. Others adopt the framework."
+          }
+        },
+        "shipping": {
+          "label": "Shipping & Iteration",
+          "description": "Delivers value in small, fast cycles and learns from each iteration",
+          "levels": {
+            "aware": "Completes assigned tasks. Follows the team's release process.",
+            "practicing": "Breaks work into shipable increments. Ships independently within team scope.",
+            "capable": "Ships MVPs to learn, not just to deliver. Iterates based on real feedback. Manages scope vs. time tradeoffs.",
+            "proficient": "Creates team velocity. Removes shipping friction. Decisions consistently optimize for learning speed.",
+            "master": "Defines shipping culture for the organization. Time-to-learning becomes a competitive advantage."
+          }
+        }
+      }
+    },
+    "leadership": {
+      "label": "Leadership & Influence",
+      "competencies": {
+        "communication": {
+          "label": "Communication",
+          "description": "Communicates clearly and adapts to audience",
+          "levels": {
+            "aware": "Communicates within the team. Needs guidance on what to communicate to whom.",
+            "practicing": "Writes clear design docs and updates. Adapts detail level to audience.",
+            "capable": "Communicates complex ideas simply. Facilitates productive discussions. Gives and receives difficult feedback well.",
+            "proficient": "Influences without authority. Communicates vision that aligns teams. Handles external communication.",
+            "master": "Organizational communication is transformed. People reference communication artifacts as exemplars."
+          }
+        },
+        "mentoring": {
+          "label": "Mentoring & Developing Others",
+          "description": "Actively helps others grow",
+          "levels": {
+            "aware": "Shares knowledge when asked. Answers questions helpfully.",
+            "practicing": "Onboards new team members well. Provides timely, specific code review feedback.",
+            "capable": "Formally mentors junior engineers. Creates learning resources. Notices when someone needs support.",
+            "proficient": "Develops multiple people simultaneously. Creates growth opportunities for others. Team capability visibly grows.",
+            "master": "Builds a culture of development. Multiplies through coaches, not just direct mentoring."
+          }
+        },
+        "initiative": {
+          "label": "Initiative & Ownership",
+          "description": "Sees what needs to be done and drives it forward",
+          "levels": {
+            "aware": "Completes assigned work. Escalates blockers appropriately.",
+            "practicing": "Identifies problems in owned areas and drives them to resolution.",
+            "capable": "Takes on problems outside direct ownership. Drives cross-team initiatives. Persists through ambiguity.",
+            "proficient": "Creates initiatives that others rally around. Defines what the team should work on, not just how.",
+            "master": "Shapes organizational direction. Problems don't need owners because this person exists."
+          }
+        },
+        "decision_making": {
+          "label": "Decision Making Under Uncertainty",
+          "description": "Makes sound decisions with incomplete information",
+          "levels": {
+            "aware": "Follows existing decision frameworks. Asks for guidance on ambiguous choices.",
+            "practicing": "Makes reversible decisions quickly. Documents assumptions. Knows when to escalate.",
+            "capable": "Makes tradeoffs explicit. Communicates decision rationale. Revisits decisions when assumptions change.",
+            "proficient": "Makes high-stakes decisions with incomplete data. Creates decision frameworks for others.",
+            "master": "Organization makes faster, better decisions because of frameworks this person established."
+          }
+        }
+      }
+    },
+    "ai_native_mindset": {
+      "label": "AI-Native Mindset",
+      "description": "Thinks and operates with AI as a core capability, not an add-on",
+      "competencies": {
+        "ai_first_thinking": {
+          "label": "AI-First Thinking",
+          "description": "Defaults to solving problems with AI, not adding AI to existing solutions",
+          "levels": {
+            "aware": "Uses AI chatbots to answer questions and draft content.",
+            "practicing": "Identifies tasks where AI could help. Experiments with AI workflows.",
+            "capable": "Redesigns workflows around AI capabilities rather than bolting AI onto existing processes.",
+            "proficient": "Sees AI-native solutions where others see traditional approaches. Rebuilds entire processes with AI.",
+            "master": "Defines new categories of work that didn't exist before AI. Others model their approach on this person."
+          }
+        },
+        "data_structuring": {
+          "label": "Datafying the Un-datafied",
+          "description": "Ability to turn qualitative, messy domains into structured, measurable ones",
+          "levels": {
+            "aware": "Recognizes that unstructured information has value waiting to be extracted.",
+            "practicing": "Structures qualitative data into categories. Tags and organizes information for retrieval.",
+            "capable": "Designs schemas for previously unstructured domains. Builds knowledge bases that are queryable.",
+            "proficient": "Creates measurement frameworks for domains others consider unmeasurable. The structured data reveals patterns no one saw.",
+            "master": "Turns an organization's implicit knowledge into structured, AI-augmentable systems."
+          }
+        },
+        "rapid_ai_prototyping": {
+          "label": "Rapid AI Prototyping",
+          "description": "Quickly tests AI ideas in practice to learn what works",
+          "levels": {
+            "aware": "Has experimented with no-code AI tools. Understands the concept of prompt iteration.",
+            "practicing": "Builds AI prototypes in days. Tests prompts systematically. Can demonstrate working AI workflows.",
+            "capable": "Ships AI MVPs in 2-3 weeks. Knows when to improve prompts vs. add knowledge vs. add MCP connections.",
+            "proficient": "Establishes rapid AI prototyping as team practice. Maintains a portfolio of tested AI solutions.",
+            "master": "Organization ships AI solutions faster than competitors because prototyping is cultural, not procedural."
+          }
+        }
+      }
+    }
+  }
+}

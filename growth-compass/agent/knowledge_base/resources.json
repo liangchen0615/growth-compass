@@ -1,0 +1,150 @@
+{
+  "version": "1.0",
+  "description": "Curated learning resources mapped to competencies. Used by Growth Compass to recommend concrete next actions.",
+  "resources": [
+    {
+      "id": "res_001",
+      "competency": "system_design",
+      "title": "Designing Data-Intensive Applications",
+      "type": "book",
+      "author": "Martin Kleppmann",
+      "url": "https://dataintensive.net",
+      "best_for": ["aware", "practicing", "capable"],
+      "time_investment": "20 hours",
+      "why_recommended": "The foundational reference for distributed systems thinking. Chapters 5-9 are especially relevant to replication, partitioning, and consensus."
+    },
+    {
+      "id": "res_002",
+      "competency": "system_design",
+      "title": "System Design Interview — An Insider's Guide",
+      "type": "book",
+      "author": "Alex Xu",
+      "url": "https://bytebytego.com",
+      "best_for": ["practicing", "capable"],
+      "time_investment": "15 hours",
+      "why_recommended": "Practical framework for thinking through design problems. Good for building the muscle of structured design reasoning."
+    },
+    {
+      "id": "res_003",
+      "competency": "ai_building",
+      "title": "Anthropic Prompt Engineering Guide",
+      "type": "documentation",
+      "url": "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering",
+      "best_for": ["aware", "practicing", "capable"],
+      "time_investment": "3 hours",
+      "why_recommended": "The best starting point for structured prompt engineering. Covers system prompts, multi-turn, and tool use."
+    },
+    {
+      "id": "res_005",
+      "competency": "ai_building",
+      "title": "Model Context Protocol (MCP) Specification",
+      "type": "documentation",
+      "url": "https://modelcontextprotocol.io",
+      "best_for": ["capable", "proficient"],
+      "time_investment": "4 hours",
+      "why_recommended": "The protocol for connecting AI agents to external systems. Essential for building agents that interact with real business tools."
+    },
+    {
+      "id": "res_006",
+      "competency": "mentoring",
+      "title": "The Making of a Manager",
+      "type": "book",
+      "author": "Julie Zhuo",
+      "url": "https://www.juliezhuo.com/themakingofamanager.html",
+      "best_for": ["aware", "practicing"],
+      "time_investment": "6 hours",
+      "why_recommended": "Practical, humble guide to people management. Excellent for engineers transitioning to leadership."
+    },
+    {
+      "id": "res_007",
+      "competency": "mentoring",
+      "title": "The Coaching Habit",
+      "type": "book",
+      "author": "Michael Bungay Stanier",
+      "best_for": ["practicing", "capable"],
+      "time_investment": "3 hours",
+      "why_recommended": "Seven essential coaching questions. Short, immediately applicable framework for developing others."
+    },
+    {
+      "id": "res_008",
+      "competency": "communication",
+      "title": "Writing Engineering Strategy Docs",
+      "type": "article",
+      "url": "https://lethain.com/engineering-strategy-docs/",
+      "author": "Will Larson",
+      "best_for": ["practicing", "capable", "proficient"],
+      "time_investment": "1 hour",
+      "why_recommended": "Practical template for communicating technical direction. Bridges the gap between design docs and vision."
+    },
+    {
+      "id": "res_009",
+      "competency": "data_thinking",
+      "title": "How to Measure Anything",
+      "type": "book",
+      "author": "Douglas W. Hubbard",
+      "best_for": ["practicing", "capable", "proficient"],
+      "time_investment": "12 hours",
+      "why_recommended": "The bible of quantifying the seemingly unquantifiable. Directly relevant to 'datafying the un-datafied.'"
+    },
+    {
+      "id": "res_010",
+      "competency": "decision_making",
+      "title": "Thinking in Bets",
+      "type": "book",
+      "author": "Annie Duke",
+      "best_for": ["practicing", "capable"],
+      "time_investment": "8 hours",
+      "why_recommended": "Decision-making under uncertainty through a poker lens. Separates decision quality from outcome quality."
+    },
+    {
+      "id": "res_011",
+      "competency": "problem_definition",
+      "title": "Are Your Lights On?",
+      "type": "book",
+      "author": "Gerald Weinberg",
+      "best_for": ["aware", "practicing", "capable"],
+      "time_investment": "4 hours",
+      "why_recommended": "Classic on problem definition. Teaches you to ask 'what is the problem really?' before solving anything."
+    },
+    {
+      "id": "res_012",
+      "competency": "shipping",
+      "title": "Shape Up: Stop Running in Circles",
+      "type": "book",
+      "author": "Ryan Singer / Basecamp",
+      "url": "https://basecamp.com/shapeup",
+      "best_for": ["practicing", "capable", "proficient"],
+      "time_investment": "4 hours",
+      "why_recommended": "Practical methodology for shipping in fixed time with variable scope. Good for building the '2-3 week MVP' muscle."
+    },
+    {
+      "id": "res_013",
+      "competency": "ai_first_thinking",
+      "title": "Building AI-Native Products",
+      "type": "essay",
+      "author": "Various",
+      "best_for": ["practicing", "capable"],
+      "time_investment": "2 hours",
+      "why_recommended": "Thinking patterns for AI-native design. How to redesign processes around AI capabilities rather than adding AI on top."
+    },
+    {
+      "id": "res_014",
+      "competency": "rapid_ai_prototyping",
+      "title": "Building a Working AI Agent in 2 Weeks",
+      "type": "project_template",
+      "best_for": ["practicing", "capable"],
+      "time_investment": "2 weeks",
+      "why_recommended": "A structured sprint template: Week 1 = core agent + knowledge base, Week 2 = skills + MCP + polish. Use this to build your portfolio."
+    },
+    {
+      "id": "res_015",
+      "competency": "user_insight",
+      "title": "The Mom Test",
+      "type": "book",
+      "author": "Rob Fitzpatrick",
+      "best_for": ["aware", "practicing"],
+      "time_investment": "4 hours",
+      "why_recommended": "How to talk to users and learn when your idea is bad. Essential for anyone building products for people other than themselves."
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "version": "1.0",
+  "description": "Target role profiles with expected competency levels. Used for gap analysis in development planning.",
+  "roles": {
+    "junior_engineer": {
+      "label": "Junior Software Engineer",
+      "typical_years": "0-2",
+      "expectations": {
+        "coding_quality": "aware",
+        "debugging": "practicing",
+        "system_design": "aware",
+        "communication": "aware",
+        "initiative": "aware",
+        "shipping": "practicing",
+        "problem_definition": "aware",
+        "ai_building": "aware"
+      },
+      "key_differentiator": "Learning speed and curiosity. At this level, trajectory matters more than current capability."
+    },
+    "mid_engineer": {
+      "label": "Mid-Level Software Engineer",
+      "typical_years": "2-5",
+      "expectations": {
+        "coding_quality": "capable",
+        "debugging": "capable",
+        "system_design": "practicing",
+        "communication": "practicing",
+        "initiative": "practicing",
+        "shipping": "capable",
+        "problem_definition": "practicing",
+        "user_insight": "aware",
+        "mentoring": "aware",
+        "ai_building": "practicing"
+      },
+      "key_differentiator": "Independent delivery. Can take a well-defined problem and ship it end-to-end with minimal guidance."
+    },
+    "senior_engineer": {
+      "label": "Senior Software Engineer",
+      "typical_years": "5-10",
+      "expectations": {
+        "system_design": "capable",
+        "coding_quality": "capable",
+        "debugging": "proficient",
+        "communication": "capable",
+        "initiative": "capable",
+        "shipping": "capable",
+        "problem_definition": "capable",
+        "user_insight": "practicing",
+        "mentoring": "practicing",
+        "decision_making": "capable",
+        "data_thinking": "practicing",
+        "ai_building": "capable",
+        "ai_first_thinking": "practicing"
+      },
+      "key_differentiator": "Scope and ambiguity. Takes vaguely defined problems and delivers solutions that work. Multiplies the team."
+    },
+    "staff_engineer": {
+      "label": "Staff Software Engineer",
+      "typical_years": "10+",
+      "expectations": {
+        "system_design": "proficient",
+        "coding_quality": "proficient",
+        "debugging": "proficient",
+        "communication": "proficient",
+        "initiative": "proficient",
+        "problem_definition": "proficient",
+        "user_insight": "capable",
+        "mentoring": "capable",
+        "decision_making": "proficient",
+        "data_thinking": "capable",
+        "ai_building": "proficient",
+        "ai_first_thinking": "capable",
+        "data_structuring": "capable"
+      },
+      "key_differentiator": "Organizational impact beyond direct team. Creates leverage through architecture, mentorship, and problem definition."
+    },
+    "tech_lead": {
+      "label": "Tech Lead / Engineering Manager",
+      "typical_years": "7+",
+      "expectations": {
+        "system_design": "capable",
+        "communication": "proficient",
+        "initiative": "capable",
+        "mentoring": "proficient",
+        "decision_making": "capable",
+        "problem_definition": "capable",
+        "user_insight": "capable",
+        "data_thinking": "practicing",
+        "shipping": "capable",
+        "ai_building": "capable",
+        "ai_first_thinking": "practicing"
+      },
+      "key_differentiator": "Team multiplier. Success is measured by team output and growth, not individual contribution."
+    },
+    "ai_builder": {
+      "label": "AI Builder (Product Engineer)",
+      "typical_years": "any",
+      "expectations": {
+        "ai_building": "capable",
+        "ai_first_thinking": "capable",
+        "rapid_ai_prototyping": "capable",
+        "problem_definition": "capable",
+        "shipping": "capable",
+        "data_structuring": "practicing",
+        "user_insight": "practicing",
+        "communication": "practicing",
+        "initiative": "capable",
+        "coding_quality": "practicing"
+      },
+      "key_differentiator": "End-to-end ownership with AI. Can go from fuzzy need to working AI solution independently. Thinks in AI-native workflows."
+    }
+  }
+}
