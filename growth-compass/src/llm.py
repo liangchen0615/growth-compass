@@ -27,6 +27,7 @@ from .models import (
     DevPlanOutput,
     ReportOutput,
     CaptureOutput,
+    ResumeExtraction,
 )
 
 AGENT_DIR = Path(__file__).parent.parent / "agent"
@@ -573,3 +574,56 @@ class LLMClient:
         except Exception:
             pass
         return None
+
+    def extract_resume(
+        self,
+        resume_text: str,
+        user_name: str = "",
+    ) -> ResumeExtraction | None:
+        """Extract structured growth entries from a resume or CV.
+
+        Feeds the resume text with a specialized prompt that asks the LLM to
+        identify distinct experiences, map them to competencies, and assess
+        significance based on the described scope and impact.
+
+        Returns None on failure so callers can fall back gracefully.
+        """
+        system = (
+            _read_md("system_prompt.md") + "\n\n"
+            + _read_skill_md("capture_growth_moment.md")
+        )
+
+        prompt = (
+            f"{self._get_kb_context()}\n\n"
+            f"## User: {user_name or 'Candidate'}\n\n"
+            f"## Resume / CV Content\n\n{resume_text}\n\n"
+            "Extract every distinct professional experience from this resume as "
+            "a growth entry. Each role, project, or accomplishment that demonstrates "
+            "a skill should become one entry.\n\n"
+            "For each entry:\n"
+            "- summary: One line describing the specific experience\n"
+            "- category: Project (delivery work), Learning (education/certification), "
+            "Milestone (promotion/award), or Struggle (if they describe overcoming difficulty)\n"
+            "- primary_skill: The MAIN competency exercised, as a skill ID from the taxonomy\n"
+            "- secondary_skills: Other competencies also exercised (0-3 skills)\n"
+            "- significance: Stretch if it was a first-time or significantly hard achievement, "
+            "Practice if it was reinforcing existing skills, Exposure if it was observation/learning\n"
+            "- context: What was the situation? (2-3 sentences)\n"
+            "- role: What specifically did they do?\n"
+            "- hard_part: What was genuinely difficult about it?\n"
+            "- outcome: What was the result? Quantify if possible.\n"
+            "- key_insight: What did they likely learn or take forward?\n\n"
+            "Aim for 3-8 entries covering the most significant experiences. "
+            "Be specific. Ground every skill claim in something they actually did.\n\n"
+            "Available skill IDs: ai_building, system_design, coding_quality, debugging, "
+            "data_thinking, communication, mentoring, initiative, decision_making, "
+            "user_insight, problem_definition, shipping, ai_first_thinking, "
+            "data_structuring, rapid_ai_prototyping"
+        )
+
+        return self._call_structured(
+            ResumeExtraction,
+            system=system,
+            user_prompt=prompt,
+            kb_context=False,  # KB context is already included in the prompt
+        )

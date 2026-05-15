@@ -17,8 +17,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from src.agent import GrowthCompassAgent
 from src.knowledge import list_all_skills, get_roles
+from src.i18n import _
 
-DATA_FILE = Path(__file__).parent.parent / "demo" / "journal_data.json"
+DEMO_DIR = Path(__file__).parent.parent / "demo"
+CURRENT_PROFILE = "default"
+DATA_FILE = DEMO_DIR / "journal_data.json"  # legacy default
 
 # ── Display helpers ────────────────────────────────────────
 
@@ -44,11 +47,41 @@ def heading(text: str):
     print(f"  {'=' * 56}\n")
 
 
+# ── Profile management ──────────────────────────────────────
+
+def profile_file(name: str) -> Path:
+    """Return the data file path for a given profile name."""
+    safe = name.strip().lower().replace(" ", "_")
+    return DEMO_DIR / f"journal_data_{safe}.json"
+
+
+def data_file() -> Path:
+    """Return the data file for the currently active profile."""
+    return profile_file(CURRENT_PROFILE)
+
+
+def list_profiles() -> list[str]:
+    """Discover existing profiles from journal files on disk."""
+    profiles = []
+    for f in DEMO_DIR.glob("journal_data_*.json"):
+        name = f.stem.replace("journal_data_", "")
+        profiles.append(name)
+    return sorted(profiles) if profiles else []
+
+
+def switch_profile(name: str):
+    """Switch to a different profile."""
+    global CURRENT_PROFILE
+    CURRENT_PROFILE = name.strip().lower().replace(" ", "_")
+
+
 # ── Data persistence ───────────────────────────────────────
 
 def save_agent(agent: GrowthCompassAgent):
-    """Save journal entries to JSON."""
+    """Save journal entries to JSON for the current profile."""
+    filepath = data_file()
     data = {
+        "profile": CURRENT_PROFILE,
         "user_name": agent.user_name,
         "entries": [
             {
@@ -69,18 +102,19 @@ def save_agent(agent: GrowthCompassAgent):
             for e in agent.journal.entries
         ],
     }
-    DATA_FILE.parent.mkdir(parents=True, exist_ok=True)
-    DATA_FILE.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    filepath.parent.mkdir(parents=True, exist_ok=True)
+    filepath.write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
 def load_agent(provider: str = "anthropic", model: str | None = None, base_url: str | None = None) -> GrowthCompassAgent:
-    """Load journal entries from JSON, or return fresh agent."""
-    if not DATA_FILE.exists():
+    """Load journal entries for the current profile, or return fresh agent."""
+    filepath = data_file()
+    if not filepath.exists():
         return GrowthCompassAgent(provider=provider, model=model, base_url=base_url)
 
-    data = json.loads(DATA_FILE.read_text(encoding="utf-8"))
+    data = json.loads(filepath.read_text(encoding="utf-8"))
     agent = GrowthCompassAgent(
-        user_name=data.get("user_name", ""),
+        user_name=data.get("user_name", CURRENT_PROFILE),
         provider=provider,
         model=model,
         base_url=base_url,
@@ -401,36 +435,29 @@ def flow_report(agent: GrowthCompassAgent):
 def flow_intro(agent: GrowthCompassAgent):
     """First-time introduction."""
     clear()
-    box("""Growth Compass v1.0
-AI-Powered Personal Growth Tracker
+    box(f"""{_('welcome_title')}
+{_('welcome_subtitle')}
 
-I help you make your professional growth
-visible, trackable, and personalized.""")
+{_('welcome_tagline')}""")
 
     if not agent.journal.entries:
-        print("\n  Welcome! It looks like this is your first time here.\n")
-        name = input("  What should I call you? ").strip()
+        print(f"\n  {_('intro_welcome')}\n")
+        name = input(f"  {_('intro_ask_name')} ").strip()
         if name:
             agent.user_name = name
-        print(f"\n  Hi {agent.user_name}! I'm your growth companion. Here's how I work:\n")
-        print("  [Capture]  Tell me what you worked on, learned, or struggled with.")
-        print("            I'll structure it into growth data.")
-        print()
-        print("  [Map]      I'll build a skill graph showing what you've demonstrated,")
-        print("            at what level, with what evidence.")
-        print()
-        print("  [Plan]     Pick a target role, and I'll generate a personalized")
-        print("            30/60/90 day development plan.")
-        print()
-        print("  [Report]   I'll produce a growth visibility report — patterns,")
-        print("            key moments, and what to focus on next.")
-        print()
-        print("  Start by capturing a growth moment!")
+        print(f"\n  {_('intro_greeting', name=agent.user_name)}\n")
+        print(f"  [Capture]  {_('intro_capture_desc')}\n")
+        print(f"  [Resume]   {_('intro_resume_desc')}\n")
+        print(f"  [Compare]  {_('intro_compare_desc')}\n")
+        print(f"  [Map]      {_('intro_map_desc')}\n")
+        print(f"  [Plan]     {_('intro_plan_desc')}\n")
+        print(f"  [Report]   {_('intro_report_desc')}\n")
+        print(f"  {_('intro_start')}")
     else:
         stats = agent.journal.stats()
-        print(f"\n  Welcome back, {agent.user_name}!")
-        print(f"  You have {stats['total_entries']} entries across {stats['unique_skills']} skills.")
-        print(f"  Latest entry: {stats['latest_entry']}")
+        print(f"\n  {_('intro_welcome_back', name=agent.user_name)}")
+        print(f"  {_('intro_stats', total=stats['total_entries'], skills=stats['unique_skills'])}")
+        print(f"  {_('intro_latest')}: {stats['latest_entry']}")
 
     wait()
 
@@ -442,20 +469,23 @@ def main_menu(agent: GrowthCompassAgent) -> bool:
     llm_status = agent.llm.available if agent.llm else False
     ai_tag = " [AI ON]" if llm_status else ""
     print()
-    box(f"Growth Compass — {agent.user_name}   |   {stats['total_entries']} entries   |   {stats['unique_skills']} skills{ai_tag}")
+    box(f"Growth Compass — {agent.user_name}   |   {stats['total_entries']} entries   |   {stats['unique_skills']} skills{ai_tag}\n   Profile: {CURRENT_PROFILE}")
     print()
     if llm_status:
-        print("  [1] Capture a growth moment (natural language)")
-        print("  [1f] Capture with structured form")
+        print(f"  [1] {_('menu_capture_llm')}")
+        print(f"  [1f] {_('menu_capture_form')}")
     else:
-        print("  [1] Capture a growth moment")
-    print("  [2] View my skill map")
-    print("  [3] Generate a development plan")
-    print("  [4] View growth report")
-    print("  [5] About / Stats")
-    print("  [6] Exit")
+        print(f"  [1] {_('menu_capture')}")
+    print(f"  [2] {_('menu_skill_map')}")
+    print(f"  [2r] {_('menu_resume')}")
+    print(f"  [3] {_('menu_compare')}")
+    print(f"  [4] {_('menu_plan')}")
+    print(f"  [5] {_('menu_report')}")
+    print(f"  [6] {_('menu_stats')}")
+    print(f"  [p] {_('menu_switch_profile')}")
+    print(f"  [7] {_('menu_exit')}")
     print()
-    choice = input("  What would you like to do? [1-6]: ").strip()
+    choice = input(f"  {_('menu_prompt')} [1-7, 2r]: ").strip()
 
     if choice in ("1", "1f"):
         if choice == "1f":
@@ -464,19 +494,145 @@ def main_menu(agent: GrowthCompassAgent) -> bool:
             flow_capture_llm(agent)
         else:
             flow_capture(agent)
+    elif choice == "2r":
+        flow_resume(agent)
     elif choice == "2":
         flow_skill_map(agent)
     elif choice == "3":
-        flow_plan(agent)
+        flow_compare(agent)
     elif choice == "4":
-        flow_report(agent)
+        flow_plan(agent)
     elif choice == "5":
-        flow_about(agent)
+        flow_report(agent)
+    elif choice == "p":
+        flow_profile_switch(agent)
+        return True  # Stay in main loop after reload
     elif choice == "6":
+        flow_about(agent)
+    elif choice == "7":
         clear()
-        print("\n  See you next time. Keep growing!\n")
+        print(f"\n  {_('goodbye')}\n")
         return False
     return True
+
+
+def flow_compare(agent: GrowthCompassAgent):
+    """Compare self-claimed skills against AI-discovered evidence."""
+    clear()
+    heading(_("compare_title"))
+
+    if not agent.journal.entries:
+        print(f"  {_('compare_no_entries')}\n")
+        wait()
+        return
+
+    print(f"  {_('compare_intro')}\n")
+    print(f"  {_('compare_ask')}")
+    print(f"  {_('compare_hint')}\n")
+    raw = input("  > ").strip()
+    if not raw:
+        print(f"\n  {_('compare_cancelled')}")
+        wait()
+        return
+
+    self_claimed = [s.strip() for s in raw.split(",") if s.strip()]
+    print(f"\n  {_('compare_you_named', count=len(self_claimed))}")
+    print(f"  {_('compare_analyzing')}")
+    print(f"  {_('compare_comparing')}")
+
+    result = agent.compare(self_claimed)
+
+    if result["status"] == "no_data":
+        print(f"\n  {result['summary']}\n")
+        wait()
+        return
+
+    print(f"\n  {_('separator')}")
+    print(f"\n  {result['summary']}\n")
+
+    if result["revealed"]:
+        print(f"  {_('compare_revealed')}")
+        for i, r in enumerate(result["revealed"], 1):
+            print(f"\n  {i}. {r['skill_label']}")
+            print(f"     {_('level')}: {r['level']} | {_('confidence')}: {r['confidence']} | "
+                  f"{_('entries_label')}: {r['entries']}")
+            print(f"     {r['insight']}")
+
+    if result["confirmed"]:
+        print(f"\n  {_('compare_confirmed')}")
+        for i, c in enumerate(result["confirmed"], 1):
+            print(f"\n  {i}. {c['skill_label']}")
+            print(f"     {_('level')}: {c['level']} | {_('confidence')}: {c['confidence']} | "
+                  f"{_('entries_label')}: {c['entries']}")
+
+    if result["aspirational"]:
+        print(f"\n  {_('compare_aspirational')}")
+        for i, a in enumerate(result["aspirational"], 1):
+            print(f"\n  {i}. {a['skill_label']}")
+            print(f"     {a['insight']}")
+
+    print(f"\n  {_('separator')}\n")
+    wait()
+
+
+def flow_resume(agent: GrowthCompassAgent):
+    """Import growth entries from a resume or CV via LLM."""
+    clear()
+    heading("RESUME IMPORT — Extract Growth Entries from Your Resume")
+
+    if not agent.llm or not agent.llm.available:
+        print("  Resume import requires an LLM.\n")
+        print("  Set an API key and restart:")
+        print("    $env:ANTHROPIC_API_KEY=\"sk-...\"   # or DEEPSEEK_API_KEY / OPENAI_API_KEY")
+        print("    python demo/interactive.py\n")
+        wait()
+        return
+
+    print("  Paste your resume or CV below. I'll extract your professional")
+    print("  experiences as growth entries and add them to your journal.\n")
+    print("  Tip: You can paste LinkedIn profile text, a CV, or any career summary.")
+    print("  Press Enter twice when you're done.\n")
+
+    lines = []
+    while True:
+        line = input("  > ").rstrip()
+        if not line:
+            if lines:
+                break
+            print("\n  (Import cancelled)")
+            wait()
+            return
+        lines.append(line)
+
+    resume_text = "\n".join(lines)
+    word_count = len(resume_text.split())
+    print(f"\n  Processing {word_count} words...")
+
+    with_spinner = True
+    try:
+        result = agent.import_resume(resume_text)
+    except Exception as e:
+        result = {"status": "fallback", "summary": str(e)}
+
+    if result["status"] == "fallback":
+        print(f"\n  {result.get('summary', 'Import failed — try capturing moments manually.')}\n")
+        wait()
+        return
+
+    print(f"\n  [OK] Imported {result['entries_added']} growth entries from your resume!\n")
+    print(f"  Summary: {result['summary'][:200]}\n")
+
+    print("  Extracted entries:")
+    for i, e in enumerate(result.get("entries", []), 1):
+        print(f"  {i}. [{e['significance']}] {e['summary'][:80]}")
+        print(f"     Skill: {e['primary_skill']} | {e['category']}")
+
+    # Save the newly imported entries
+    save_agent(agent)
+
+    print(f"\n  All {result['entries_added']} entries added to your journal.")
+    print(f"  Run 'View Skill Map' or 'Compare' to see what they reveal.\n")
+    wait()
 
 
 def flow_about(agent: GrowthCompassAgent):
@@ -508,7 +664,119 @@ def flow_about(agent: GrowthCompassAgent):
 
 # ── Main ────────────────────────────────────────────────────
 
+def select_profile():
+    """Choose or create a profile at startup."""
+    global CURRENT_PROFILE
+
+    profiles = list_profiles()
+
+    # Migrate legacy file if it exists
+    legacy = DEMO_DIR / "journal_data.json"
+    if legacy.exists() and not profiles:
+        mig = DEMO_DIR / "journal_data_default.json"
+        legacy.rename(mig)
+        profiles = ["default"]
+
+    if not profiles:
+        clear()
+        box(f"""{_('welcome_title')}
+{_('welcome_subtitle')}""")
+        print(f"\n  {_('profile_no_profiles')}\n")
+        name = input(f"  {_('profile_name_prompt')} ").strip()
+        if name:
+            switch_profile(name)
+        else:
+            switch_profile("default")
+        return
+
+    clear()
+    box(_("profile_select_title"))
+
+    print(f"\n  {_('profile_active')}: {CURRENT_PROFILE}\n")
+    print(f"  {_('profile_available')}:\n")
+    for i, p in enumerate(profiles, 1):
+        marker = f" <-- {_('profile_active')}" if p == CURRENT_PROFILE else ""
+        filepath = profile_file(p)
+        try:
+            data = json.loads(filepath.read_text(encoding="utf-8"))
+            entries = len(data.get("entries", []))
+            user = data.get("user_name", p)
+            print(f"  [{i}] {_('profile_entries_count', name=p, user=user, count=entries)}{marker}")
+        except Exception:
+            print(f"  [{i}] {p}{marker}")
+
+    print(f"\n  [n] {_('profile_create_new')}")
+    print(f"  [q] {_('profile_continue')} ({CURRENT_PROFILE})")
+
+    choice = input(f"\n  {_('profile_choose')} ").strip().lower()
+    if choice == "q":
+        return
+    elif choice == "n":
+        name = input(f"\n  {_('profile_new_name')} ").strip()
+        if name:
+            switch_profile(name)
+        return
+    else:
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(profiles):
+                switch_profile(profiles[idx])
+        except (ValueError, IndexError):
+            pass
+
+
+def flow_profile_switch(agent: GrowthCompassAgent):
+    """Switch to a different profile during the session."""
+    save_agent(agent)
+
+    global CURRENT_PROFILE
+    profiles = list_profiles()
+    current = CURRENT_PROFILE
+
+    clear()
+    heading(_("profile_switch_title"))
+
+    print(f"  {_('profile_active')}: {current}\n")
+    print(f"  {_('profile_available')}:\n")
+    for i, p in enumerate(profiles, 1):
+        marker = f" <-- {_('profile_active')}" if p == current else ""
+        filepath = profile_file(p)
+        try:
+            data = json.loads(filepath.read_text(encoding="utf-8"))
+            entries = len(data.get("entries", []))
+            user = data.get("user_name", p)
+            print(f"  [{i}] {_('profile_entries_count', name=p, user=user, count=entries)}{marker}")
+        except Exception:
+            print(f"  [{i}] {p}{marker}")
+
+    print(f"\n  [n] {_('profile_create_new')}")
+    print(f"  [q] {_('profile_cancel')} {current}")
+
+    choice = input(f"\n  {_('profile_switch_to')} ").strip().lower()
+    if choice == "q":
+        return
+    elif choice == "n":
+        name = input(f"\n  {_('profile_new_name')} ").strip()
+        if name:
+            switch_profile(name)
+    else:
+        try:
+            idx = int(choice) - 1
+            if 0 <= idx < len(profiles):
+                switch_profile(profiles[idx])
+        except (ValueError, IndexError):
+            return
+
+    # Reload agent with new profile
+    new_agent = load_agent()
+    agent.__dict__.clear()
+    agent.__dict__.update(new_agent.__dict__)
+    print(f"\n  {_('profile_switched')} {CURRENT_PROFILE}")
+    wait()
+
+
 def main():
+
     # Auto-detect provider from available API keys
     provider = os.environ.get("GROWTH_COMPASS_PROVIDER", "")
     if not provider:
@@ -522,6 +790,8 @@ def main():
     model = os.environ.get("GROWTH_COMPASS_MODEL")
     base_url = os.environ.get("GROWTH_COMPASS_BASE_URL")
 
+    # Profile selection
+    select_profile()
     agent = load_agent(provider=provider, model=model, base_url=base_url)
     flow_intro(agent)
     running = True
@@ -533,4 +803,4 @@ if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
-        print("\n\n  See you next time. Keep growing!\n")
+        print(f"\n\n  {_('goodbye')}\n")

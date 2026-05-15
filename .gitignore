@@ -8,3 +8,4 @@ venv/
 dist/
 .claude/
 
+demo/journal_data_*.json

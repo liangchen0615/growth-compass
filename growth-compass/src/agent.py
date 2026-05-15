@@ -16,6 +16,7 @@ from .dev_plan import DevPlanGenerator
 from .report import ReportGenerator
 from .knowledge import list_all_skills, get_role, get_resources
 from .llm import LLMClient
+from .comparison import ComparisonEngine
 
 
 class GrowthCompassAgent:
@@ -128,6 +129,61 @@ class GrowthCompassAgent:
             reflection=result.reflection or "",
         )
 
+    # ---- Resume Import ----
+
+    def import_resume(self, resume_text: str) -> dict:
+        """Extract growth entries from a resume or CV via LLM.
+
+        Feeds the resume through the LLM to extract structured growth entries,
+        then adds them all to the journal. Returns a summary of what was found.
+
+        Returns {"status": "imported", "entries_added": N, ...} on success,
+        {"status": "fallback"} if LLM unavailable or extraction failed.
+        """
+        if not self.llm or not self.llm.available:
+            return {
+                "status": "fallback",
+                "summary": "Resume import requires an LLM. Set an API key (ANTHROPIC_API_KEY, DEEPSEEK_API_KEY, or OPENAI_API_KEY) and try again.",
+            }
+
+        extraction = self.llm.extract_resume(resume_text, self.user_name)
+        if extraction is None or not extraction.entries:
+            return {
+                "status": "fallback",
+                "summary": "Could not extract structured entries from the resume. Try pasting specific sections or capturing moments manually.",
+            }
+
+        added = 0
+        for entry in extraction.entries:
+            self.capture(
+                summary=entry.summary,
+                primary_skill=entry.primary_skill,
+                category=entry.category,
+                secondary_skills=entry.secondary_skills,
+                significance=entry.significance,
+                context=entry.context,
+                role=entry.role,
+                hard_part=entry.hard_part,
+                outcome=entry.outcome,
+                key_insight=entry.key_insight,
+            )
+            added += 1
+
+        return {
+            "status": "imported",
+            "entries_added": added,
+            "summary": extraction.summary,
+            "entries": [
+                {
+                    "summary": e.summary,
+                    "primary_skill": e.primary_skill,
+                    "category": e.category,
+                    "significance": e.significance,
+                }
+                for e in extraction.entries
+            ],
+        }
+
     # ---- Skill Mapping ----
 
     def map_skills(self) -> dict:
@@ -226,6 +282,50 @@ class GrowthCompassAgent:
             "next_priorities": report.next_priorities,
             "reflection_prompt": report.reflection_prompt,
             "shareable_summary": self.report_generator.shareable_summary(report),
+        }
+
+    # ---- Comparison ----
+
+    def compare(self, self_claimed: list[str]) -> dict:
+        """Compare self-claimed skills against AI-discovered evidence.
+
+        Runs the skill map if needed, then feeds both sets into the comparison
+        engine. Returns Confirmed, Revealed, and Aspirational categories.
+
+        Args:
+            self_claimed: Free-text labels the user says they're good at.
+        """
+        if not self.journal.entries:
+            return {
+                "status": "no_data",
+                "summary": "No growth entries yet. Capture some moments first, then we can compare.",
+                "confirmed": [],
+                "revealed": [],
+                "aspirational": [],
+            }
+
+        self.map_skills()
+        if not self.last_skill_map:
+            return {
+                "status": "no_data",
+                "summary": "Could not build a skill map. Try capturing more entries.",
+                "confirmed": [],
+                "revealed": [],
+                "aspirational": [],
+            }
+
+        engine = ComparisonEngine(llm_client=self.llm)
+        result = engine.compare(self_claimed, self.last_skill_map.skills)
+
+        # Rank revealed by evidence strength
+        result.revealed = engine.rank_insights(result.revealed)
+
+        return {
+            "status": "generated",
+            "summary": result.summary,
+            "confirmed": result.confirmed,
+            "revealed": result.revealed,
+            "aspirational": result.aspirational,
         }
 
     # ---- Utilities ----

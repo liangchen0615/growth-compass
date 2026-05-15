@@ -190,3 +190,25 @@ class CaptureOutput(BaseModel):
     outcome: Optional[str] = Field(default=None, description="What happened, what feedback was received")
     key_insight: Optional[str] = Field(default=None, description="The one thing the user will take forward from this experience")
     reflection: Optional[str] = Field(default=None, description="A deeper insight or pattern the user noticed")
+
+
+# ── Resume Extraction Models ────────────────────────────────────
+
+class ResumeEntry(BaseModel):
+    """A single growth entry extracted from a resume bullet or paragraph."""
+    summary: str = Field(description="One-line summary of what happened in this experience")
+    category: str = Field(description="One of: Project, Learning, Feedback, Struggle, Milestone")
+    primary_skill: str = Field(description="Skill ID of the main skill exercised, from the competency taxonomy")
+    secondary_skills: list[str] = Field(default_factory=list, description="Additional skill IDs exercised")
+    significance: str = Field(description="One of: Stretch, Practice, Exposure")
+    context: str = Field(default="", description="2-3 sentence description of the situation")
+    role: str = Field(default="", description="What the user specifically did")
+    hard_part: str = Field(default="", description="What was genuinely difficult")
+    outcome: str = Field(default="", description="What happened, what feedback was received")
+    key_insight: str = Field(default="", description="The one thing the user will take forward from this experience")
+
+
+class ResumeExtraction(BaseModel):
+    """Multiple growth entries extracted from an entire resume."""
+    entries: list[ResumeEntry] = Field(description="List of growth entries extracted from the resume, one per significant experience")
+    summary: str = Field(description="One-paragraph summary of the candidate's overall trajectory and themes")
